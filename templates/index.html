@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Mis Hábitos</h1>
-    <a href="/create" class="btn btn-primary mb-3">Nuevo Hábito</a>
-    
+<h1 class="text-center">Habit Tracker</h1>
+    <a href="/create" class="btn btn-primary mb-3">Create New Habit</a>
     <div class="list-group">
         {% for habit in habits %}
         <div class="list-group-item d-flex justify-content-between align-items-center">
