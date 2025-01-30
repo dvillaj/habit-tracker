@@ -1,32 +1,31 @@
 from flask import Flask, jsonify, request, redirect, url_for, render_template
 from business_logic.habit_logic import *
 from business_logic.database import init_db 
-from config import DATABASE_PATH
+from config import *
+from flask import Flask, flash 
+from datetime import date
+from datetime import datetime
+import logging
 
 app = Flask(__name__, template_folder='../templates')
+app.config['SECRET_KEY'] = "mysecretkey"
 app.config['DATABASE'] = DATABASE_PATH
+
+# Configurar el logging
+LoggerConfig.configure_logging()
+
+logger = logging.getLogger(__name__)
+logger.info("Starting the application")
 
 # Inicializar la base de datos al iniciar la aplicación
 with app.app_context():
     init_db()
 
-# @app.route('/api/habits', methods=['GET'])
-def get_habits():
-    habits = get_all_habits()
-    return jsonify([dict(habit) for habit in habits])
-
-@app.route('/api/habits', methods=['POST'])
-def add_habit():
-    data = request.get_json()
-    new_habit = Habit(data['name'], data['type'])
-    create_habit(new_habit)
-    return jsonify({'message': 'Habit created'}), 201
-
 # Rutas para el frontend
 @app.route('/')
 def index():
     habits = get_all_habits()
-    return render_template('index.html', habits=habits)
+    return render_template('index.html', habits=habits, date=date)
 
 @app.route('/create', methods=['GET', 'POST'])
 def create_habit_page():
@@ -37,6 +36,7 @@ def create_habit_page():
         )
         create_habit(habit)
         return redirect(url_for('index'))
+
     return render_template('create_habit.html')
 
 # Añadir estas nuevas rutas
@@ -48,23 +48,38 @@ def edit_habit(habit_id):
         return redirect(url_for('index'))
     
     if request.method == 'POST':
-        update_habit(habit_id, request.form['name'], request.form['type'])
+        name= request.form['name']
+        type = request.form['type']
+
+        update_habit(habit_id, name, type)
         return redirect(url_for('index'))
     
     return render_template('edit_habit.html', habit=habit)
 
-# Nueva ruta API para edición
-@app.route('/api/habits/<int:habit_id>', methods=['PUT'])
-def api_update_habit(habit_id):
-    data = request.get_json()
-    update_habit(habit_id, data['name'], data['type'])
-    return jsonify({'message': 'Habit updated'}), 200
-
-
-from datetime import date
 
 @app.route('/log/<int:habit_id>', methods=['POST'])
 def log_habit(habit_id):
     log_date = request.form.get('date', str(date.today()))
-    create_log(habit_id, log_date)
+    
+    success = create_log(habit_id, log_date)
+    
+    if success:
+        flash('✅ Habit logged successfully!', 'success')
+    else:
+        flash('⚠️ This habit was already logged for selected date', 'warning')
+    
     return redirect(url_for('index'))
+
+
+@app.template_filter('date_format')
+def format_date(value):
+    try:
+        # Si el valor viene de SQLite como string
+        if isinstance(value, str):
+            date_obj = datetime.strptime(value, "%Y-%m-%d")
+        else:
+            date_obj = value
+            
+        return date_obj.strftime("%b %d, %Y")
+    except:
+        return "Invalid date"

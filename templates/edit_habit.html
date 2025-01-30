@@ -4,18 +4,18 @@
     <h1>Edit Habit</h1>
     <form method="POST">
         <div class="mb-3">
-            <label for="name" class="form-label">Habit Name</label>
+            <label for="name" class="form-label">Name</label>
             <input type="text" class="form-control" id="name" name="name" 
-                   value="{{ habit['name'] }}" required>
+                   value="{{ habit.name }}" required>
         </div>
         
         <div class="mb-3">
-            <label for="type" class="form-label">Habit Type</label>
+            <label for="type" class="form-label">Type</label>
             <select class="form-select" id="type" name="type" required>
-                <option value="positive" {% if habit['type'] == 'positive' %}selected{% endif %}>
+                <option value="positive" {% if habit.type == 'positive' %}selected{% endif %}>
                     Positive
                 </option>
-                <option value="negative" {% if habit['type'] == 'negative' %}selected{% endif %}>
+                <option value="negative" {% if habit.type == 'negative' %}selected{% endif %}>
                     Negative
                 </option>
             </select>

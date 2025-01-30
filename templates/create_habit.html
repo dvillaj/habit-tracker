@@ -1,21 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Crear Nuevo Hábito</h1>
+    <h1>New Habit</h1>
     <form method="POST">
         <div class="mb-3">
-            <label for="name" class="form-label">Nombre del hábito</label>
+            <label for="name" class="form-label">Name</label>
             <input type="text" class="form-control" id="name" name="name" required>
         </div>
         
         <div class="mb-3">
-            <label for="type" class="form-label">Tipo de hábito</label>
+            <label for="type" class="form-label">Type</label>
             <select class="form-select" id="type" name="type" required>
-                <option value="positive">Positivo</option>
-                <option value="negative">Negativo</option>
+                <option value="positive">Positive</option>
+                <option value="negative">Negative</option>
             </select>
         </div>
-        
-        <button type="submit" class="btn btn-primary">Guardar</button>
+
+        <button type="submit" class="btn btn-primary">Create</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
     </form>
 {% endblock %}

@@ -2,15 +2,30 @@ from .database import get_db_connection
 import sqlite3
 
 class Habit:
-    def __init__(self, name, habit_type):
+    def __init__(self, name, habit_type, id =0, log_count=0, log_dates = [], last_logged=None):
+        self.id = id
         self.name = name
         self.type = habit_type
+        self.log_count = log_count
+        self.log_dates = log_dates
+        self.last_logged = last_logged
 
 def get_all_habits():
     conn = get_db_connection()
-    habits = conn.execute('SELECT * FROM habits').fetchall()
+    habits = conn.execute('''
+        SELECT 
+            habits.id,
+            habits.name,
+            habits.type,
+            COUNT(logs.id) as log_count,
+            GROUP_CONCAT(logs.date, ', ') as log_dates,
+            MAX(logs.date) as last_logged
+        FROM habits
+        LEFT JOIN logs ON habits.id = logs.habit_id
+        GROUP BY habits.id
+    ''').fetchall()
     conn.close()
-    return habits
+    return [Habit(h['name'], h['type'], h['id'], h['log_count'], h['log_dates'], h['last_logged']) for h in habits]
 
 def create_habit(habit):
     conn = get_db_connection()
@@ -23,7 +38,7 @@ def get_habit_by_id(habit_id):
     conn = get_db_connection()
     habit = conn.execute('SELECT * FROM habits WHERE id = ?', (habit_id,)).fetchone()
     conn.close()
-    return habit
+    return Habit(habit['name'], habit['type'])
 
 def update_habit(habit_id, name, habit_type):
     conn = get_db_connection()
@@ -38,26 +53,11 @@ def create_log(habit_id, date):
         conn.execute('INSERT INTO logs (habit_id, date) VALUES (?, ?)', 
                    (habit_id, date))
         conn.commit()
+        return True
 
     except sqlite3.IntegrityError:
         # Avoid duplicate logs for the same day
-        pass
+        return False
 
     finally:
         conn.close()
-
-        
-
-def get_habits_with_logs():
-    conn = get_db_connection()
-    habits = conn.execute('''
-        SELECT habits.*, 
-               COUNT(logs.id) as log_count,
-               GROUP_CONCAT(logs.date, ', ') as log_dates,
-               MAX(logs.date) as last_logged
-        FROM habits
-        LEFT JOIN logs ON habits.id = logs.habit_id
-        GROUP BY habits.id
-    ''').fetchall()
-    conn.close()
-    return habits
