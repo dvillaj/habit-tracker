@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, redirect, url_for, render_template
-from business_logic.habit_logic import Habit, get_all_habits, create_habit
+from business_logic.habit_logic import Habit, get_all_habits, create_habit, get_habit_by_id, update_habit
 from business_logic.database import init_db 
 from config import DATABASE_PATH
 
@@ -38,3 +38,24 @@ def create_habit_page():
         create_habit(habit)
         return redirect(url_for('index'))
     return render_template('create_habit.html')
+
+# Añadir estas nuevas rutas
+@app.route('/edit/<int:habit_id>', methods=['GET', 'POST'])
+def edit_habit(habit_id):
+    habit = get_habit_by_id(habit_id)
+    
+    if not habit:
+        return redirect(url_for('index'))
+    
+    if request.method == 'POST':
+        update_habit(habit_id, request.form['name'], request.form['type'])
+        return redirect(url_for('index'))
+    
+    return render_template('edit_habit.html', habit=habit)
+
+# Nueva ruta API para edición
+@app.route('/api/habits/<int:habit_id>', methods=['PUT'])
+def api_update_habit(habit_id):
+    data = request.get_json()
+    update_habit(habit_id, data['name'], data['type'])
+    return jsonify({'message': 'Habit updated'}), 200

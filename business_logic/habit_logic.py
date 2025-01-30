@@ -17,3 +17,16 @@ def create_habit(habit):
                (habit.name, habit.type))
     conn.commit()
     conn.close()
+
+def get_habit_by_id(habit_id):
+    conn = get_db_connection()
+    habit = conn.execute('SELECT * FROM habits WHERE id = ?', (habit_id,)).fetchone()
+    conn.close()
+    return habit
+
+def update_habit(habit_id, name, habit_type):
+    conn = get_db_connection()
+    conn.execute('UPDATE habits SET name = ?, type = ? WHERE id = ?',
+               (name, habit_type, habit_id))
+    conn.commit()
+    conn.close()    
