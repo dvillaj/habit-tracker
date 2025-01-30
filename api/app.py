@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, redirect, url_for, render_template
-from business_logic.habit_logic import Habit, get_all_habits, create_habit, get_habit_by_id, update_habit
+from business_logic.habit_logic import *
 from business_logic.database import init_db 
 from config import DATABASE_PATH
 
@@ -59,3 +59,12 @@ def api_update_habit(habit_id):
     data = request.get_json()
     update_habit(habit_id, data['name'], data['type'])
     return jsonify({'message': 'Habit updated'}), 200
+
+
+from datetime import date
+
+@app.route('/log/<int:habit_id>', methods=['POST'])
+def log_habit(habit_id):
+    log_date = request.form.get('date', str(date.today()))
+    create_log(habit_id, log_date)
+    return redirect(url_for('index'))

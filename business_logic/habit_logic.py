@@ -1,4 +1,5 @@
 from .database import get_db_connection
+import sqlite3
 
 class Habit:
     def __init__(self, name, habit_type):
@@ -30,3 +31,33 @@ def update_habit(habit_id, name, habit_type):
                (name, habit_type, habit_id))
     conn.commit()
     conn.close()    
+
+def create_log(habit_id, date):
+    conn = get_db_connection()
+    try:
+        conn.execute('INSERT INTO logs (habit_id, date) VALUES (?, ?)', 
+                   (habit_id, date))
+        conn.commit()
+
+    except sqlite3.IntegrityError:
+        # Avoid duplicate logs for the same day
+        pass
+
+    finally:
+        conn.close()
+
+        
+
+def get_habits_with_logs():
+    conn = get_db_connection()
+    habits = conn.execute('''
+        SELECT habits.*, 
+               COUNT(logs.id) as log_count,
+               GROUP_CONCAT(logs.date, ', ') as log_dates,
+               MAX(logs.date) as last_logged
+        FROM habits
+        LEFT JOIN logs ON habits.id = logs.habit_id
+        GROUP BY habits.id
+    ''').fetchall()
+    conn.close()
+    return habits
