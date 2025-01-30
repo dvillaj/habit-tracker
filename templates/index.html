@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Mis Hábitos</h1>
+    <a href="/create" class="btn btn-primary mb-3">Nuevo Hábito</a>
+    
+    <div class="list-group">
+        {% for habit in habits %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <h5>{{ habit['name'] }}</h5>
+                <span class="badge bg-{{ 'success' if habit['type'] == 'positive' else 'danger' }}">
+                    {{ habit['type'] | capitalize }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
