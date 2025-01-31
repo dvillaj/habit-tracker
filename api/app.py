@@ -34,7 +34,7 @@ def create_habit_page():
         habit = Habit(name, request.form['type'])
         try:
             create_habit(habit)
-            flash('Habit created successfully!', 'success')
+            flash(f"Habit '{name}' created successfully!", 'success')
 
         except sqlite3.IntegrityError:
             flash(f"⚠️ Habit '{name}' already exists", 'warning')
