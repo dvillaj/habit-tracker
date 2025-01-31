@@ -1,20 +1,21 @@
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<!-- Cambiar el ID del modal para ser único -->
+<div class="modal fade" id="deleteModal{{ habit.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ habit.id }}" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <h5 class="modal-title" id="deleteModalLabel{{ habit.id }}">Delete Habit</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                Are you sure you want to delete the habit "<span id="habitName"></span>"?
-                <br><small class="text-danger">This action cannot be undone!</small>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form id="deleteForm" method="POST">
-                    <button type="submit" class="btn btn-danger">Delete Permanently</button>
-                </form>
-            </div>
+            <form method="POST" action="{{ url_for('delete_habit_endpoint', habit_id=habit.id) }}">
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the habit <strong>"{{ habit.name }}"</strong>?</p>
+                    <p class="text-danger"><small>This will permanently delete all associated logs!</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
