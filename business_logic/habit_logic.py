@@ -45,6 +45,7 @@ def get_habit_by_id(habit_id):
     conn.close()
     return Habit(habit['name'], habit['type'])
 
+
 def update_habit(habit_id, name, habit_type):
     conn = get_db_connection()
     conn.execute('UPDATE habits SET name = ?, type = ? WHERE id = ?',
@@ -66,3 +67,19 @@ def create_log(habit_id, date):
 
     finally:
         conn.close()
+
+
+def delete_habit(habit_id):
+    conn = get_db_connection()
+    try:
+        conn.execute('DELETE FROM logs WHERE habit_id = ?', (habit_id,))
+        conn.execute('DELETE FROM habits WHERE id = ?', (habit_id,))
+        conn.commit()
+        return True
+    except Exception as e:
+        logger.error(f"Error deleting habit: {str(e)}")
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
+

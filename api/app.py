@@ -45,7 +45,7 @@ def create_habit_page():
 
 # Añadir estas nuevas rutas
 @app.route('/edit/<int:habit_id>', methods=['GET', 'POST'])
-def edit_habit(habit_id):
+def edit_habit_endpoint(habit_id):
     habit = get_habit_by_id(habit_id)
     
     if not habit:
@@ -80,6 +80,18 @@ def log_habit(habit_id):
     
     return redirect(url_for('index'))
 
+
+@app.route('/habits/<int:habit_id>/delete', methods=['POST'])
+def delete_habit_endpoint(habit_id):
+    try:
+        if delete_habit(habit_id):
+            flash('✅ Habit deleted successfully!', 'success')
+        else:
+            flash('⚠️ Error deleting habit', 'error')
+    except Exception as e:
+        flash(f'🚨 Error: {str(e)}', 'danger')
+
+    return redirect(url_for('index'))
 
 @app.template_filter('date_format')
 def format_date(value):

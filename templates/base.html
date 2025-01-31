@@ -26,7 +26,30 @@
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
-    .text-center {
-        text-align: center;
+    .delete-btn {
+        transition: all 0.3s ease;
+    }
+    .delete-btn:hover {
+        
+        transform: scale(1.05);
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Manejar el modal de borrado
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var habitId = button.getAttribute('data-habit-id');
+            var habitName = button.getAttribute('data-habit-name');
+            
+            // Actualizar el formulario
+            var form = deleteModal.querySelector('#deleteForm');
+            form.action = `/habits/${habitId}/delete`;
+            
+            // Mostrar el nombre del hábito
+            deleteModal.querySelector('#habitName').textContent = habitName;
+        });
+    });
+</script>
