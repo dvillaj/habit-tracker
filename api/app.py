@@ -30,11 +30,15 @@ def index():
 @app.route('/create', methods=['GET', 'POST'])
 def create_habit_page():
     if request.method == 'POST':
-        habit = Habit(
-            request.form['name'],
-            request.form['type']
-        )
-        create_habit(habit)
+        name = request.form['name']
+        habit = Habit(name, request.form['type'])
+        try:
+            create_habit(habit)
+            flash('Habit created successfully!', 'success')
+
+        except sqlite3.IntegrityError:
+            flash(f"⚠️ Habit '{name}' already exists", 'warning')
+
         return redirect(url_for('index'))
 
     return render_template('create_habit.html')
@@ -51,7 +55,13 @@ def edit_habit(habit_id):
         name= request.form['name']
         type = request.form['type']
 
-        update_habit(habit_id, name, type)
+        try:
+            update_habit(habit_id, name, type)
+            flash('Habit updated successfully!', 'success')
+
+        except sqlite3.IntegrityError:
+            flash(f"⚠️ Habit '{name}' already exists", 'warning')
+
         return redirect(url_for('index'))
     
     return render_template('edit_habit.html', habit=habit)

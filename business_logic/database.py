@@ -18,7 +18,9 @@ def init_db():
                   name TEXT NOT NULL,
                   type TEXT CHECK(type IN ('positive', 'negative')) NOT NULL)''')
                   
-
+    conn.execute('''CREATE UNIQUE INDEX IF NOT EXISTS idx_habits_unique_name
+                    ON habits ( name)''')
+    
     # Modificar la tabla logs
     conn.execute('''CREATE TABLE IF NOT EXISTS logs
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,

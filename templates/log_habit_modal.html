@@ -1,0 +1,31 @@
+<!-- Modal para logging -->
+<div class="modal fade" id="logModal{{ habit.id }}" tabindex="-1" 
+        aria-labelledby="logModalLabel{{ habit.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('log_habit', habit_id=habit.id) }}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logModalLabel{{ habit.id }}">
+                        Log {{ habit.name }}
+                    </h5>
+                    <button type="button" class="btn-close" 
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="logDate{{ habit.id }}" class="form-label">Date</label>
+                        <input type="date" class="form-control" 
+                                id="logDate{{ habit.id }}" name="date" 
+                                value="{{ date.today().isoformat() }}" 
+                                max="{{ date.today().isoformat() }}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save Log</button>
+                    <button type="button" class="btn btn-secondary" 
+                            data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
