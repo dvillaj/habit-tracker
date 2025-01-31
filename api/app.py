@@ -1,21 +1,21 @@
 from flask import Flask, jsonify, request, redirect, url_for, render_template
 from business_logic.habit_logic import *
 from business_logic.database import init_db 
-from config import *
+from config.environment import DATABASE_PATH, FLASK_SECRET_KEY
 from flask import Flask, flash 
 from datetime import date
 from datetime import datetime
-import logging
+from config.logger_config import LoggerConfig
+
+# Init logger
+LoggerConfig()
+
+logger = LoggerConfig.get_logger(__name__)
+logger.info("Starting Flask app")
 
 app = Flask(__name__, template_folder='../templates')
-app.config['SECRET_KEY'] = "mysecretkey"
+app.config['SECRET_KEY'] = FLASK_SECRET_KEY
 app.config['DATABASE'] = DATABASE_PATH
-
-# Configurar el logging
-LoggerConfig.configure_logging()
-
-logger = logging.getLogger(__name__)
-logger.info("Starting the application")
 
 # Inicializar la base de datos al iniciar la aplicación
 with app.app_context():

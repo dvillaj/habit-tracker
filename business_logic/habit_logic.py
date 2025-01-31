@@ -1,5 +1,8 @@
 from .database import get_db_connection
 import sqlite3
+from config.logger_config import LoggerConfig
+
+logger = LoggerConfig.get_logger(__name__)
 
 class Habit:
     def __init__(self, name, habit_type, id =0, log_count=0, log_dates = [], last_logged=None):
@@ -28,6 +31,8 @@ def get_all_habits():
     return [Habit(h['name'], h['type'], h['id'], h['log_count'], h['log_dates'], h['last_logged']) for h in habits]
 
 def create_habit(habit):
+    logger.info(f"Creating habit {habit.name}")
+
     conn = get_db_connection()
     conn.execute('INSERT INTO habits (name, type) VALUES (?, ?)',
                (habit.name, habit.type))

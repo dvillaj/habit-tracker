@@ -1,7 +1,12 @@
 import sqlite3
-from config import DATABASE_PATH
+from config.environment import DATABASE_PATH
+import os
 
 def get_db_connection():
+    db_directory = os.path.dirname(DATABASE_PATH)
+    if not os.path.exists(db_directory):
+        os.makedirs(db_directory)
+
     conn = sqlite3.connect(DATABASE_PATH)
     conn.row_factory = sqlite3.Row
     return conn

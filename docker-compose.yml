@@ -4,9 +4,10 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./data:/app/data
+      - ./external:/app/data
     environment:
-      - DATABASE_PATH=/app/data/habits.db
+      - DATABASE_PATH=/app/data/db/habits.db
+      - CONFIGURATION_PATH=/app/data/config
       - LOG_LEVEL=INFO
 
 volumes:
