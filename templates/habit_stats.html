@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Statistics for {{ stats.habit.name }}</h2>
+    
+    <!-- Flash Messages -->
+    {% include '_messages.html' %}
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Logs</h5>
+                    <p class="display-4">{{ stats.total_logs }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Current Streak</h5>
+                    <p class="display-4">{{ stats.current_streak }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Max Streak</h5>
+                    <p class="display-4">{{ stats.max_streak }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navegación del calendario -->
+    <div class="calendar-nav mb-3">
+        <a href="{{ url_for('habit_stats_endpoint', habit_id=stats.habit.id, year=prev_year, month=prev_month) }}" 
+           class="btn btn-outline-secondary">
+            &lt; Prev
+        </a>
+        <h3 class="d-inline mx-3">{{ month_name[ month ] }} {{ year }}</h3>
+        <a href="{{ url_for('habit_stats_endpoint', habit_id=stats.habit.id, year=next_year, month=next_month) }}" 
+           class="btn btn-outline-secondary">
+            Next &gt;
+        </a>
+    </div>
+    
+    <!-- Calendario -->
+    <div class="calendar">
+        <div class="row week-header">
+            {% for day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+            <div class="col text-center fw-bold">{{ day }}</div>
+            {% endfor %}
+        </div>
+        {% for week in month_days %}
+        <div class="row week">
+            {% for day in week %}
+            <div class="col day text-center 
+                        {% if day.month != month %}text-muted{% endif %}
+                        {% if day == current_date %}today{% endif %}">
+                        <div class="day-content 
+                                    {% if day.isoformat() in stats.log_dates %}
+                                        {% if stats.habit.type == 'positive' %}bg-success{% else %}bg-danger{% endif %}
+                                    {% else %}
+                                        {% if stats.habit.type == 'negative' and day <= current_date %}bg-light{% endif %}
+                                    {% endif %}"
+                            data-bs-toggle="tooltip" 
+                            title="Click to toggle log">
+                            <form method="POST" action="{{ url_for('toggle_log_endpoint') }}" class="d-inline">
+                                <input type="hidden" name="habit_id" value="{{ stats.habit.id }}">
+                                <input type="hidden" name="log_date" value="{{ day.isoformat() }}">
+                                <input type="hidden" name="year" value="{{ current_year }}">
+                                <input type="hidden" name="month" value="{{ current_month }}">
+                                <button type="submit" 
+                                        class="btn btn-link p-0 text-decoration-none text-reset"
+                                        {% if day > current_date %}disabled{% endif %}>
+                                    {{ day.day }}
+                                </button>
+                            </form>
+                        </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    
+</div>
+
+<style>
+    .day {
+        padding: 5px;
+        height: 50px;
+    }
+    .day-content {
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        line-height: 35px;
+        margin: 0 auto;
+    }
+    .today .day-content {
+        border: 2px solid #0d6efd;
+    }
+</style>
+{% endblock %}
+
+<script>
+    // Inicializar tooltips de Bootstrap
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>

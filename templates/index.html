@@ -40,6 +40,8 @@
                        data-bs-target="#deleteModal{{ habit.id }}">
                        Delete
                     </button>
+                    <a href="{{ url_for('habit_stats_endpoint', habit_id=habit.id) }}" 
+                        class="btn btn-sm btn-outline-info">Stats</a>
                 </div>
             </div>
         </div>

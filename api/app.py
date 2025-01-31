@@ -2,10 +2,11 @@ from flask import Flask, jsonify, request, redirect, url_for, render_template
 from business_logic.habit_logic import *
 from business_logic.database import init_db 
 from config.environment import DATABASE_PATH, FLASK_SECRET_KEY
-from flask import Flask, flash 
+from flask import Flask, flash, abort
 from datetime import date
 from datetime import datetime
 from config.logger_config import LoggerConfig
+from calendar import month_name, _localized_month
 
 # Init logger
 LoggerConfig()
@@ -93,6 +94,62 @@ def delete_habit_endpoint(habit_id):
 
     return redirect(url_for('index'))
 
+
+
+@app.route('/habits/<int:habit_id>/stats')
+def habit_stats_endpoint(habit_id):
+    year = request.args.get('year', date.today().year, type=int)
+    month = request.args.get('month', date.today().month, type=int)
+    
+    stats = get_habit_stats(habit_id)
+    
+    if not stats:
+        abort(404)
+    
+    # Generar calendario
+    cal = calendar.Calendar()
+    month_days = cal.monthdatescalendar(year, month)
+
+    
+    prev_year, prev_month = (year, month-1) if month > 1 else (year-1, 12)
+    next_year, next_month = (year, month+1) if month < 12 else (year+1, 1)
+    
+    return render_template('habit_stats.html',
+                         stats=stats,
+                         month_days=month_days,
+                         current_date=date.today(),
+                         prev_year=prev_year,
+                         prev_month=prev_month,
+                         next_year=next_year,
+                         next_month=next_month,
+                         year=year,
+                         month=month)
+
+
+@app.route('/toggle_log', methods=['POST'])
+def toggle_log_endpoint():
+    habit_id = request.form['habit_id']
+    log_date = request.form['log_date']
+    year = request.form['year']
+    month = request.form['month']
+    
+    try:
+        # Validar fecha
+        selected_date = date.fromisoformat(log_date)
+        if selected_date > date.today():
+            raise ValueError("Cannot log future dates")
+            
+        action = toggle_log(habit_id, log_date)
+        flash(f'Log {action} successfully!', 'success')
+
+    except Exception as e:
+        flash(f'Error: {str(e)}', 'danger')
+    
+    return redirect(url_for('habit_stats_endpoint', 
+                          habit_id=habit_id, 
+                          year=year, 
+                          month=month))
+
 @app.template_filter('date_format')
 def format_date(value):
     try:
@@ -105,3 +162,18 @@ def format_date(value):
         return date_obj.strftime("%b %d, %Y")
     except:
         return "Invalid date"
+    
+
+
+
+@app.context_processor
+def utility_processor():
+    import calendar
+
+    return {
+        'month_name': month_name,
+        'get_prev_next': lambda y, m: (
+            (y, m-1) if m > 1 else (y-1, 12),
+            (y, m+1) if m < 12 else (y+1, 1)
+        )
+    }    
