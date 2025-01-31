@@ -68,7 +68,7 @@ def edit_habit_endpoint(habit_id):
 
 
 @app.route('/log/<int:habit_id>', methods=['POST'])
-def log_habit(habit_id):
+def log_habit_endpoint(habit_id):
     log_date = request.form.get('date', str(date.today()))
     
     success = create_log(habit_id, log_date)
