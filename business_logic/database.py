@@ -1,17 +1,13 @@
 import sqlite3
-from config.environment import DATABASE_PATH
-import os
+from config.app_config import AppConfig
 
 def get_db_connection():
-    db_directory = os.path.dirname(DATABASE_PATH)
-    if not os.path.exists(db_directory):
-        os.makedirs(db_directory)
-
-    conn = sqlite3.connect(DATABASE_PATH)
+    config = AppConfig.config()
+    conn = sqlite3.connect(config[AppConfig.DATABASE_PATH])
     conn.row_factory = sqlite3.Row
     return conn
 
-def init_db():
+def init_db(config):
     conn = get_db_connection()
     conn.execute('''CREATE TABLE IF NOT EXISTS habits
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
