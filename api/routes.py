@@ -97,7 +97,7 @@ def register_routes(app):
         prev_year, prev_month = (year, month-1) if month > 1 else (year-1, 12)
         next_year, next_month = (year, month+1) if month < 12 else (year+1, 1)
         
-        return render_template('habit_stats.html',
+        return render_template('stat_habit.html',
                             stats=stats,
                             month_days=month_days,
                             current_date=date.today(),
