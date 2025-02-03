@@ -34,25 +34,58 @@ def get_all_habits():
 def create_habit(habit):
     logger.info(f"Creating habit {habit.name}")
 
-    conn = get_db_connection()
-    conn.execute('INSERT INTO habits (name, type) VALUES (?, ?)',
-               (habit.name, habit.type))
-    conn.commit()
+    try:
+        conn = get_db_connection()
+        conn.execute('INSERT INTO habits (name, type) VALUES (?, ?)',
+                (habit.name, habit.type))
+        conn.commit()
+        logger.info(f"Habit {habit.name} created")
+    
+    except sqlite3.IntegrityError:
+        logger.warning(f"Habit {habit.name} already exists in the database")
+        raise
+
+    except Exception as e:
+        logger.error(f"Error creating habit: {str(e)}")
+        conn.rollback()
+        raise e
+        
+    finally:
+        conn.close()
+
     conn.close()
 
 def get_habit_by_id(habit_id):
     conn = get_db_connection()
     habit = conn.execute('SELECT * FROM habits WHERE id = ?', (habit_id,)).fetchone()
     conn.close()
-    return Habit(habit['name'], habit['type'])
+    
+    if habit is None:
+        raise ValueError(f"Habit with id {habit_id} does not exist in the database")
+    
+    return Habit(habit['name'], habit['type'], habit['id']) if habit else None
 
 
-def update_habit(habit_id, name, habit_type):
+def update_habit(habit):
     conn = get_db_connection()
-    conn.execute('UPDATE habits SET name = ?, type = ? WHERE id = ?',
-               (name, habit_type, habit_id))
-    conn.commit()
-    conn.close()    
+
+    try:
+        conn.execute('UPDATE habits SET name = ?, type = ? WHERE id = ?',
+               (habit.name, habit.type, habit.id))
+        conn.commit()
+
+    except sqlite3.IntegrityError:
+        logger.warning(f"Habit {habit.name} already exists in the database")
+        raise
+
+    except Exception as e:
+        logger.error(f"Error updating habit: {str(e)}")
+        conn.rollback()
+        raise e
+
+    finally:
+        conn.close()    
+
 
 def create_log(habit_id, date):
     conn = get_db_connection()
@@ -73,20 +106,27 @@ def create_log(habit_id, date):
 def delete_habit(habit_id):
     conn = get_db_connection()
     try:
+        cursor = conn.execute('SELECT 1 FROM habits WHERE id = ?', (habit_id,))
+        if cursor.fetchone() is None:
+            logger.warning(f"Habit {habit_id} does not exist")
+            return False
+    
         conn.execute('DELETE FROM logs WHERE habit_id = ?', (habit_id,))
         conn.execute('DELETE FROM habits WHERE id = ?', (habit_id,))
         conn.commit()
+        logger.info(f"Habit {habit_id} deleted")
         return True
+    
     except Exception as e:
         logger.error(f"Error deleting habit: {str(e)}")
         conn.rollback()
         raise e
+    
     finally:
         conn.close()
 
 
-from datetime import date, timedelta
-import calendar
+
 
 def get_habit_stats(habit_id):
     conn = get_db_connection()

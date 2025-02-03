@@ -16,42 +16,53 @@ def register_routes(app):
     @app.route('/create', methods=['GET', 'POST'])
     def create_habit_endpoint():
         if request.method == 'POST':
-            name = request.form['name']
-            habit = Habit(name, request.form['type'])
+            name = request.form['name'].strip()
+            habit_type = request.form['type']
+            
+            if not name:
+                flash("⚠️ The name can't be empty", 'danger')
+                return render_template('create_habit.html', 
+                                    habit = Habit(name, habit_type))
+
+            habit = Habit(name, habit_type)
             try:
                 create_habit(habit)
                 flash(f"Habit '{name}' created successfully!", 'success')
-
+                return redirect(url_for('index'))
+            
             except sqlite3.IntegrityError:
-                flash(f"⚠️ Habit '{name}' already exists", 'warning')
-
-            return redirect(url_for('index'))
+                flash(f"⚠️ Habit '{name}' already exists", 'danger')
+                return render_template('create_habit.html',
+                                    habit = Habit(name, habit_type))
 
         return render_template('create_habit.html')
 
-    # Añadir estas nuevas rutas
     @app.route('/edit/<int:habit_id>', methods=['GET', 'POST'])
     def edit_habit_endpoint(habit_id):
         habit = get_habit_by_id(habit_id)
         
-        if not habit:
-            return redirect(url_for('index'))
-        
         if request.method == 'POST':
-            name= request.form['name']
-            type = request.form['type']
+            name = request.form['name'].strip()
+            habit_type = request.form['type']
 
+            updated_habit = Habit(name, habit_type, habit_id)
+            
+            if not updated_habit.name:
+                flash("⚠️ The name can't be empty", 'danger')
+                return render_template('edit_habit.html', 
+                                    habit = updated_habit)
             try:
-                update_habit(habit_id, name, type)
-                flash('Habit updated successfully!', 'success')
-
+                update_habit(updated_habit)
+                flash(f"Habit '{name}' updated successfully!", 'success')
+                return redirect(url_for('index'))
+            
             except sqlite3.IntegrityError:
-                flash(f"⚠️ Habit '{name}' already exists", 'warning')
+                flash(f"⚠️ Habit '{name}' already exists", 'danger')
+                return render_template('edit_habit.html', 
+                                    habit = updated_habit)
 
-            return redirect(url_for('index'))
-        
         return render_template('edit_habit.html', habit=habit)
-
+    
 
     @app.route('/log/<int:habit_id>', methods=['POST'])
     def log_habit_endpoint(habit_id):
@@ -69,11 +80,14 @@ def register_routes(app):
 
     @app.route('/habits/<int:habit_id>/delete', methods=['POST'])
     def delete_habit_endpoint(habit_id):
+
+        habit = get_habit_by_id(habit_id)
+        
         try:
-            if delete_habit(habit_id):
-                flash('✅ Habit deleted successfully!', 'success')
+            if delete_habit(habit.id):
+                flash(f"✅ Habit '{habit.name}' deleted successfully!", 'success')
             else:
-                flash('⚠️ Error deleting habit', 'error')
+                flash(f"⚠️ Error deleting habit '{habit.name}'", 'error')
         except Exception as e:
             flash(f'🚨 Error: {str(e)}', 'danger')
 
