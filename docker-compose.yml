@@ -1,17 +1,19 @@
 services:
   web:
-    build: .
+    image: dvilaj/habit-tracker:latest
     ports:
       - "5000:5000"
     volumes:
       - ./external:/app/data
-
     environment:
       - DATABASE_PATH=/app/data/db/habits.db
       - CONFIGURATION_PATH=/app/data/config
       - LOG_LEVEL=INFO
       - FLASK_HOST=0.0.0.0
       - FLASK_PORT=5000
+      - FLASK_WORKERS=1
+      - PUID=1000
+      - PGID=1000
 
 volumes:
   habit-data:
