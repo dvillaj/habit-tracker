@@ -6,7 +6,7 @@
 # Detener y eliminar contenedores previos
 docker-compose down -v
 
-docker build -t dvilaj/habit-tracker:latest . && docker-compose up 
+docker build --no-cache -t dvillaj/habit-tracker:latest .  && docker-compose up 
 ```
 
 ## External shell

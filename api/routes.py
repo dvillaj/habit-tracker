@@ -1,7 +1,9 @@
-from flask import request, redirect, url_for, render_template, flash, abort
+from flask import request, redirect, url_for, render_template, flash, abort, jsonify
 from business_logic.habit_logic import *
 from datetime import datetime, date
 from calendar import month_name
+
+logger = LoggerConfig.get_logger(__name__)
 
 def register_routes(app):
 
@@ -12,7 +14,7 @@ def register_routes(app):
         return render_template('index.html', habits=habits, date=date)
 
     @app.route('/create', methods=['GET', 'POST'])
-    def create_habit_page():
+    def create_habit_endpoint():
         if request.method == 'POST':
             name = request.form['name']
             habit = Habit(name, request.form['type'])
@@ -147,6 +149,10 @@ def register_routes(app):
             return "Invalid date"
         
 
+    @app.route('/health')
+    def health_check():
+        logger.debug("Health check")
+        return jsonify(status="healthy"), 200
 
 
     @app.context_processor
@@ -160,3 +166,4 @@ def register_routes(app):
                 (y, m+1) if m < 12 else (y+1, 1)
             )
         }    
+

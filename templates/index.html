@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1 class="mb-4">Habit Tracker</h1>
-    <a href="/create" class="btn btn-primary mb-3">New Habit</a>
+    <a href="{{ url_for('create_habit_endpoint') }}"  class="btn btn-primary mb-3">New Habit</a>
     
     <!-- Flash Messages -->
     {% include '_messages.html' %}
