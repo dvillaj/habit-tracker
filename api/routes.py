@@ -97,6 +97,8 @@ def register_routes(app):
 
     @app.route('/habits/<int:habit_id>/stats')
     def habit_stats_endpoint(habit_id):
+        import calendar
+        
         year = request.args.get('year', date.today().year, type=int)
         month = request.args.get('month', date.today().month, type=int)
         

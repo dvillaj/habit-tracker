@@ -151,12 +151,18 @@ def get_habit_stats(habit_id):
     }
 
 def calculate_streak(log_dates, habit_type):
+
+    if not log_dates:
+        return 0
+
     streak = 0
     current_date = date.today()
     
     while True:
         date_str = current_date.isoformat()
         has_log = date_str in log_dates
+
+        logger.debug(f"Checking date {date_str} with log: {has_log}")
         
         if (habit_type == 'positive' and has_log) or (habit_type == 'negative' and not has_log):
             streak += 1
