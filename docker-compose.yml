@@ -1,25 +1,21 @@
 services:
   web:
-    image: dvillaj/habit-tracker:latest
-    container_name: habit-tracker
-    restart: unless-stopped
-
+    build: .
     ports:
-      - "5000:5000"
-    volumes:
-      - ./external:/app/data
-    environment:
-      - DATABASE_PATH=/app/data/db/habits.db
-      - CONFIGURATION_PATH=/app/data/config
-      - LOG_LEVEL=DEBUG
-      - FLASK_HOST=0.0.0.0
-      - FLASK_PORT=5000
-      - FLASK_WORKERS=1
-      - PUID=1000
-      - PGID=1000
+      - 5000:5001
 
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3      
+    volumes:
+      - ./data:/data
+      - ./app/static/uploads:/app/app/static/uploads
+      - ./app/static/examples:/app/app/static/examples
+
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=0
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5001
+      - FLASK_WORKERS=1
+      - DATABASE_PATH=/data/instance
+      - SECRET_KEY=your-secret-key
+      - JWT_SECRET_KEY=your-jwt-secret-key
+      - LOG_LEVEL=INFO

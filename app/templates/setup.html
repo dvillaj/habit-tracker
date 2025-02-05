@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Configuración Inicial{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Configuración Inicial</h2>
+                <p class="text-muted text-center">Crea el primer usuario administrador</p>
+                
+                <form method="POST" action="{{ url_for('setup.setup') }}">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               required autofocus placeholder="ejemplo@email.com">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               required placeholder="Mínimo 8 caracteres">
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            Configurar Aplicación
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <small class="text-muted">
+                Una vez completado el setup, esta ruta dejará de estar disponible
+            </small>
+        </div>
+    </div>
+</div>
+{% endblock %}

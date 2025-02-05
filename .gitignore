@@ -1,5 +1,12 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
 
-Pipfile.lock
-**/*.pyc
-**/__pycache__
-external/**/
+# Virtual environments
+.venv
+
+*.pyc

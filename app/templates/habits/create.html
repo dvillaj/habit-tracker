@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Hábito{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Nuevo Hábito</h2>
+                
+                <form method="POST" action="{{ url_for('habits.create_habit') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Días de la semana</label>
+                        <div class="d-flex gap-3 flex-wrap">
+                            {% for day in ['L', 'M', 'X', 'J', 'V', 'S', 'D'] %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" 
+                                       id="day-{{ loop.index }}" name="days" value="{{ day }}" checked>
+                                <label class="form-check-label" for="day-{{ loop.index }}">
+                                    {{ day }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="icon" class="form-label">Icono (SVG opcional)</label>
+                        <input type="file" class="form-control" id="icon" name="icon" accept=".svg">
+                        <div class="form-text">Sube un archivo SVG (máx. 2MB)</div>
+                    </div>
+
+                    <!-- Añadir vista previa del icono -->
+                    <div class="mb-3" id="icon-preview" style="display: none;">
+                        <h6>Vista previa:</h6>
+                        <div id="preview-container" class="border p-2" style="max-width: 100px;"></div>
+                    </div>
+                   
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Guardar Hábito</button>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Ejemplos de hábitos:</h5>
+                        <div class="row" id="habit-examples">
+                            {% for example in examples %}
+                            <div class="col-md-4 mb-3">
+                                <div class="card example-card" data-title="{{ example.title }}" 
+                                     data-description="{{ example.description }}" data-icon="{{ example.icon }}">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center gap-3">
+                                            {% if example.icon %}
+                                            <img src="{{ url_for('static', filename='examples/' + example.icon) }}" 
+                                                 alt="Icono" style="width: 40px;">
+                                            {% endif %}
+                                            <h6 class="mb-0">{{ example.title }}</h6>
+                                        </div>
+                                        <p class="text-muted small mt-2 mb-0">{{ example.description }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <script>
+                    document.querySelectorAll('.example-card').forEach(card => {
+                        card.addEventListener('click', () => {
+                            document.getElementById('title').value = card.dataset.title;
+                            document.getElementById('description').value = card.dataset.description;
+                            if(card.dataset.icon) {
+                                // Lógica para manejar el icono
+                            }
+                        });
+                    });
+                    </script>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/preview.js') }}"></script>
+
+{% endblock %}
+
+
