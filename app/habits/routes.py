@@ -5,12 +5,16 @@ from app.app_factory import db
 from werkzeug.utils import secure_filename
 from app.utils.file_uploads import allowed_file
 import os
+from config.logger import LoggerConfig
 
 habits_bp = Blueprint('habits', __name__, template_folder='templates')
+logger = LoggerConfig.get_logger(__name__)
 
 @habits_bp.route('/', methods=['GET']) 
 @login_required
 def list_habits():
+    logger.info("Listing habits ...")
+    current_app.logger.info("Listing habits ...")
     habits = Habit.query.filter_by(user_id=current_user.id).all()
     return render_template('habits/list.html', habits=habits)
 
