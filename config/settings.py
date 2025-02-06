@@ -2,13 +2,12 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
-
-BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(override=True)
 
 class Config:
     # Configuración base
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(os.getenv('DATABASE_PATH', BASE_DIR / 'instance'), 'habits.db')}"
+    DATABASE_PATH = os.path.abspath(os.getenv('DATABASE_PATH', 'instance'))
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(DATABASE_PATH, 'habits.db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Configuración Flask
@@ -22,7 +21,7 @@ class Config:
     REMEMBER_COOKIE_DURATION = int(os.getenv('REMEMBER_COOKIE_DURATION', 30))
     
     # Configuración de uploads
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'app', 'static', 'uploads')
+    UPLOAD_FOLDER = os.path.abspath(os.getenv('UPLOAD_FOLDER', os.path.join('app', 'static', 'uploads')))
     ALLOWED_EXTENSIONS = {'svg'}
     MAX_CONTENT_LENGTH = 2 * 1024 * 1024
 

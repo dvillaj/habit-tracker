@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+flask-sqlalchemy = "*"
+flask-login = "*"
+flask-jwt-extended = "*"
+python-dotenv = "*"
+pytest = "*"
+werkzeug = "*"
+blinker = "*"
+gunicorn = "*"
+pyyaml = "*"
+
+[dev-packages]

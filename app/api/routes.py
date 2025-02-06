@@ -29,3 +29,8 @@ def api_login():
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@api_bp.route('/health')
+def health_check():
+    return jsonify(status="healthy"), 200    

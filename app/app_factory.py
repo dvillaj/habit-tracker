@@ -1,11 +1,10 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from config.logger import LoggerConfig
 from config import Config
-import logging.config
-import logging
-import yaml
 import os
+
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -21,13 +20,9 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     init_jwt(app)
 
-    # Configurar logging
-
-    with open('logging_config.yaml') as f:
-        config = yaml.safe_load(f.read().replace('${LOG_LEVEL}', Config.LOG_LEVEL))
-        logging.config.dictConfig(config)
-    
-    app.logger = logging.getLogger('app')
+     # Configurar logging
+    LoggerConfig.configure()
+    app.logger = LoggerConfig.get_logger('app')
 
     app.logger.info(f'Starting app in {Config.FLASK_ENV} environment')
 

@@ -1,21 +1,20 @@
 services:
   web:
-    build: .
+    image: dvillaj/habit-tracker:latest
+    container_name: habit-tracker
+
     ports:
       - 5000:5001
 
     volumes:
-      - ./data:/data
+      - ./external:/app/data
       - ./app/static/uploads:/app/app/static/uploads
       - ./app/static/examples:/app/app/static/examples
 
     environment:
       - FLASK_ENV=production
-      - FLASK_DEBUG=0
       - FLASK_HOST=0.0.0.0
       - FLASK_PORT=5001
       - FLASK_WORKERS=1
-      - DATABASE_PATH=/data/instance
-      - SECRET_KEY=your-secret-key
-      - JWT_SECRET_KEY=your-jwt-secret-key
+      - DATABASE_PATH=/app/data/db
       - LOG_LEVEL=INFO
