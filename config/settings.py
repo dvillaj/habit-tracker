@@ -21,7 +21,7 @@ class Config:
     REMEMBER_COOKIE_DURATION = int(os.getenv('REMEMBER_COOKIE_DURATION', 30))
     
     # Configuración de uploads
-    UPLOAD_FOLDER = os.path.abspath(os.getenv('UPLOAD_FOLDER', os.path.join('app', 'static', 'uploads')))
+    UPLOAD_FOLDER = os.path.abspath(os.getenv('UPLOAD_FOLDER', os.path.join('app', 'static', 'upload')))
     ALLOWED_EXTENSIONS = {'svg'}
     MAX_CONTENT_LENGTH = 2 * 1024 * 1024
 

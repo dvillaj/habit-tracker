@@ -9,14 +9,35 @@
                 <h2 class="card-title mb-4">Nuevo Hábito</h2>
                 
                 <form method="POST" action="{{ url_for('habits.create_habit') }}" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Título</label>
-                        <input type="text" class="form-control" id="title" name="title" required>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label for="description" class="form-label">Descripción</label>
-                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+
+                    <div class="row">
+                        <div class="col-md-10">
+                            <!-- Campos del formulario -->
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Título</label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       value="{{ request.form.title }}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="description" name="description"
+                                         >{{ request.form.description }}</textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <div id="icon-preview" class="mb-3">
+                                        <img src="{{ url_for('static', filename='images/default-icon.svg') }}" 
+                                             id="icon-preview-image" class="img-fluid" style="cursor: pointer;">
+                                    </div>
+                                    <input type="file" id="icon-input" name="icon" accept=".svg" hidden>
+                                    <small class="text-muted">Haz click para cambiar la imagen</small>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="mb-3">
@@ -32,18 +53,6 @@
                             </div>
                             {% endfor %}
                         </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="icon" class="form-label">Icono (SVG opcional)</label>
-                        <input type="file" class="form-control" id="icon" name="icon" accept=".svg">
-                        <div class="form-text">Sube un archivo SVG (máx. 2MB)</div>
-                    </div>
-
-                    <!-- Añadir vista previa del icono -->
-                    <div class="mb-3" id="icon-preview" style="display: none;">
-                        <h6>Vista previa:</h6>
-                        <div id="preview-container" class="border p-2" style="max-width: 100px;"></div>
                     </div>
                    
                     <div class="d-grid">
@@ -82,6 +91,18 @@
                                 // Lógica para manejar el icono
                             }
                         });
+                    });
+                    
+                    document.getElementById('icon-preview').addEventListener('click', () => {
+                        document.getElementById('icon-input').click();
+                    });
+
+                    document.getElementById('icon-input').addEventListener('change', function(e) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            document.getElementById('icon-preview-image').src = e.target.result;
+                        }
+                        reader.readAsDataURL(this.files[0]);
                     });
                     </script>
 

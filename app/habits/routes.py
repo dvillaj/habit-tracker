@@ -2,8 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from app.database.models import Habit, ExampleHabit
 from app.app_factory import db
-from werkzeug.utils import secure_filename
-from app.utils.file_uploads import allowed_file
+from app.utils.file_uploads import allowed_file, save_icon
 import os
 from config.logger import LoggerConfig
 
@@ -26,9 +25,16 @@ def create_habit():
 
     if request.method == 'POST':
         try:
+                  
+            form_data = {
+                'title': request.form.get('title', ''),
+                'description': request.form.get('description', ''),
+            }
             
-            title = request.form['title'].strip()
-            
+            title = form_data['title'].strip()
+            if not title:
+                raise ValueError("El título es requerido")
+                        
             # Validar nombre único
             existing = Habit.query.filter_by(
                 user_id=current_user.id,
@@ -37,24 +43,14 @@ def create_habit():
             
             if existing:
                 flash('Ya tienes un hábito con este nombre', 'danger')
-                return render_template('habits/create.html', examples=examples)
+                return render_template('habits/create.html', examples=examples, form=form_data)
             
             # Manejar la subida del icono
             icon_filename = None
             if 'icon' in request.files:
                 icon_file = request.files['icon']
                 if icon_file and allowed_file(icon_file.filename):
-                    filename = secure_filename(icon_file.filename)
-                    upload_folder = current_app.config['UPLOAD_FOLDER']
-                    
-                    # Crear directorio si no existe
-                    if not os.path.exists(upload_folder):
-                        os.makedirs(upload_folder)
-                    
-                    # Guardar archivo
-                    filepath = os.path.join(upload_folder, filename)
-                    icon_file.save(filepath)
-                    icon_filename = filename
+                    icon_filename = save_icon(icon_file)
 
             # Crear el hábito
             new_habit = Habit(

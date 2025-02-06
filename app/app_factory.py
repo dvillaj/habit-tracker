@@ -15,6 +15,9 @@ def create_app(config_class=Config):
     from app.database.models import User
     from app.database.setup import create_initial_data
 
+    # Create dirs as configured
+    create_dirs()
+
     app = Flask(__name__)
     
     app.config.from_object(config_class)
@@ -46,10 +49,7 @@ def create_app(config_class=Config):
         return User.query.get(int(user_id))
 
     app.logger.info(f'Database URI: {Config.SQLALCHEMY_DATABASE_URI}')
-
-    if not os.path.exists(Config.SQLALCHEMY_DATABASE_URI.split('///')[1]):
-        os.makedirs(os.path.dirname(Config.SQLALCHEMY_DATABASE_URI.split('///')[1]), exist_ok=True)
-
+    
     with app.app_context():
         db.create_all()
         create_initial_data()
@@ -58,3 +58,18 @@ def create_app(config_class=Config):
     login_manager.login_message_category = "warning"
 
     return app
+
+
+def create_dirs():
+
+    # Database Path
+    if not os.path.exists(Config.SQLALCHEMY_DATABASE_URI.split('///')[1]):
+        os.makedirs(os.path.dirname(Config.SQLALCHEMY_DATABASE_URI.split('///')[1]), exist_ok=True)
+
+    # Upload folder
+    upload_folder = Config.UPLOAD_FOLDER
+    
+    # Crear directorio si no existe
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder)
+
