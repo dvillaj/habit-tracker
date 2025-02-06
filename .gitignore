@@ -10,3 +10,7 @@ wheels/
 .venv
 
 *.pyc
+
+external/
+app.log
+instance/
