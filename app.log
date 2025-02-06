@@ -1,13 +1,14 @@
-2025-02-05 11:16:27 - app - DEBUG - Starting app in development environment
-2025-02-05 11:16:59 - app - DEBUG - Starting app in development environment
-2025-02-05 11:18:17 - app - DEBUG - Starting app in development environment
-2025-02-05 11:21:20 - app - DEBUG - Starting app in development environment
-2025-02-05 11:21:20 - app - ERROR - Database URI: sqlite:///external/db/habits.db\habits.db
-2025-02-05 11:21:31 - app - DEBUG - Starting app in production environment
-2025-02-05 11:21:31 - app - ERROR - Database URI: sqlite:///C:\Users\dvill\Projects\a\instance\habits.db
-2025-02-05 11:22:31 - app - DEBUG - Starting app in production environment
-2025-02-05 11:22:31 - app - ERROR - Database URI: sqlite:///C:\Users\dvill\Projects\a\instance\habits.db
-2025-02-05 11:24:05 - app - DEBUG - Starting app in production environment
-2025-02-05 11:24:05 - app - ERROR - Database URI: sqlite:///C:\Users\dvill\Projects\a\instance\habits.db
-2025-02-05 11:27:14 - app - DEBUG - Starting app in production environment
-2025-02-05 11:27:14 - app - ERROR - Database URI: sqlite:///C:\Users\dvill\Projects\a\habit-tracker\instance\habits.db
+2025-02-06 09:51:59 - app - INFO - Starting app in development environment
+2025-02-06 09:51:59 - app - INFO - Database URI: sqlite:///external/db\habits.db
+2025-02-06 09:58:02 - app - INFO - Starting app in development environment
+2025-02-06 09:58:02 - app - INFO - Database URI: sqlite:///instance\habits.db
+2025-02-06 10:02:20 - app - INFO - Starting app in development environment
+2025-02-06 10:02:20 - app - INFO - Database URI: sqlite:///instance\habits.db
+2025-02-06 10:05:25 - app - INFO - Starting app in development environment
+2025-02-06 10:05:25 - app - INFO - Database URI: sqlite:///./instance\habits.db
+2025-02-06 10:06:03 - app - INFO - Starting app in development environment
+2025-02-06 10:06:03 - app - INFO - Database URI: sqlite:///./instance\habits.db
+2025-02-06 10:06:28 - app - INFO - Starting app in development environment
+2025-02-06 10:06:28 - app - INFO - Database URI: sqlite:///C:\Users\dvill\Projects\habit-tracker\instance\habits.db
+2025-02-06 10:07:27 - app - INFO - Starting app in development environment
+2025-02-06 10:07:27 - app - INFO - Database URI: sqlite:///./instance\habits.db

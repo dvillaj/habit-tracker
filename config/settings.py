@@ -8,7 +8,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 class Config:
     # Configuración base
-    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(os.getenv('DATABASE_PATH', BASE_DIR / 'instance'), 'habits.db')}"
+    DATABASE_PATH = os.getenv('DATABASE_PATH', BASE_DIR / 'instance')
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(DATABASE_PATH, 'habits.db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Configuración Flask
@@ -19,8 +20,12 @@ class Config:
     FLASK_HOST = os.getenv('FLASK_HOST', '0.0.0.0')
     FLASK_PORT = int(os.getenv('FLASK_PORT', 5000))
     FLASK_WORKERS = int(os.getenv('FLASK_WORKERS', 4))
+    REMEMBER_COOKIE_DURATION = int(os.getenv('REMEMBER_COOKIE_DURATION', 30))
     
     # Configuración de uploads
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'app', 'static', 'uploads')
     ALLOWED_EXTENSIONS = {'svg'}
-    MAX_CONTENT_LENGTH = 2 * 1024 * 1024    
+    MAX_CONTENT_LENGTH = 2 * 1024 * 1024
+
+    # Configuración de logging
+    LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')    
